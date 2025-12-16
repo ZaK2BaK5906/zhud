@@ -1,4 +1,5 @@
 Config = {}
+Locales = {}
 
 -- Langue par défaut (fr, en, es, de, it, pt, nl, pl)
 Config.Locale = 'fr'
