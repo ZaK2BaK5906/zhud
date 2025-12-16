@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZK HUD V3</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Container principal du HUD -->
+    <div id="hud-container" style="display: none;">
+        <!-- Informations du joueur -->
+        <div id="player-info" class="hud-element draggable">
+            <div class="info-item" data-element="id">
+                <i class="fas fa-id-card"></i>
+                <span class="info-label">ID</span>
+                <span class="info-value" id="player-id">000</span>
+            </div>
+            <div class="info-item" data-element="job">
+                <i class="fas fa-briefcase"></i>
+                <span class="info-label">Job</span>
+                <span class="info-value" id="player-job">Chômeur</span>
+            </div>
+            <div class="info-item" data-element="grade">
+                <i class="fas fa-star"></i>
+                <span class="info-label">Grade</span>
+                <span class="info-value" id="player-grade">N/A</span>
+            </div>
+            <div class="info-item" data-element="cash">
+                <i class="fas fa-money-bill-wave"></i>
+                <span class="info-label">Cash</span>
+                <span class="info-value" id="player-cash">$0</span>
+            </div>
+            <div class="info-item" data-element="bank">
+                <i class="fas fa-landmark"></i>
+                <span class="info-label">Bank</span>
+                <span class="info-value" id="player-bank">$0</span>
+            </div>
+        </div>
+
+        <!-- Indicateurs de statut (formes innovantes) -->
+        <div id="status-indicators" class="hud-element draggable">
+            <div class="status-item hexagon" data-element="health">
+                <div class="status-bg"></div>
+                <div class="status-fill" id="health-fill"></div>
+                <div class="status-icon">
+                    <i class="fas fa-heart"></i>
+                </div>
+                <div class="status-value" id="health-value">100</div>
+            </div>
+
+            <div class="status-item diamond" data-element="armor">
+                <div class="status-bg"></div>
+                <div class="status-fill" id="armor-fill"></div>
+                <div class="status-icon">
+                    <i class="fas fa-shield-halved"></i>
+                </div>
+                <div class="status-value" id="armor-value">0</div>
+            </div>
+
+            <div class="status-item pentagon" data-element="hunger">
+                <div class="status-bg"></div>
+                <div class="status-fill" id="hunger-fill"></div>
+                <div class="status-icon">
+                    <i class="fas fa-burger"></i>
+                </div>
+                <div class="status-value" id="hunger-value">100</div>
+            </div>
+
+            <div class="status-item octagon" data-element="thirst">
+                <div class="status-bg"></div>
+                <div class="status-fill" id="thirst-fill"></div>
+                <div class="status-icon">
+                    <i class="fas fa-droplet"></i>
+                </div>
+                <div class="status-value" id="thirst-value">100</div>
+            </div>
+        </div>
+
+        <!-- Compteur de vitesse -->
+        <div id="speedometer" class="hud-element draggable" style="display: none;">
+            <!-- Style Minimal -->
+            <div class="speedometer-style minimal">
+                <div class="speed-display">
+                    <span class="speed-value" id="speed-minimal">0</span>
+                    <span class="speed-unit">km/h</span>
+                </div>
+                <div class="vehicle-info-minimal">
+                    <div class="info-row">
+                        <i class="fas fa-gas-pump"></i>
+                        <span id="fuel-minimal">0%</span>
+                    </div>
+                    <div class="info-row">
+                        <i class="fas fa-wrench"></i>
+                        <span id="engine-minimal">100%</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Style Moderne -->
+            <div class="speedometer-style moderne">
+                <div class="speed-main">
+                    <div class="speed-circle">
+                        <span class="speed-value" id="speed-moderne">0</span>
+                        <span class="speed-unit">km/h</span>
+                    </div>
+                </div>
+                <div class="vehicle-bars">
+                    <div class="bar-item">
+                        <i class="fas fa-gas-pump"></i>
+                        <div class="bar-container">
+                            <div class="bar-fill fuel-bar" id="fuel-bar-moderne"></div>
+                        </div>
+                        <span class="bar-value" id="fuel-moderne">0%</span>
+                    </div>
+                    <div class="bar-item">
+                        <i class="fas fa-wrench"></i>
+                        <div class="bar-container">
+                            <div class="bar-fill engine-bar" id="engine-bar-moderne"></div>
+                        </div>
+                        <span class="bar-value" id="engine-moderne">100%</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Style Classique -->
+            <div class="speedometer-style classique">
+                <div class="gauge-container">
+                    <svg viewBox="0 0 200 120" class="speed-gauge">
+                        <path class="gauge-bg" d="M 20,100 A 80,80 0 0,1 180,100" />
+                        <path class="gauge-fill" id="speed-gauge-path" d="M 20,100 A 80,80 0 0,1 180,100" />
+                        <line class="gauge-needle" id="gauge-needle" x1="100" y1="100" x2="100" y2="40" />
+                    </svg>
+                    <div class="gauge-center">
+                        <span class="speed-value" id="speed-classique">0</span>
+                        <span class="speed-unit">km/h</span>
+                    </div>
+                </div>
+                <div class="vehicle-stats">
+                    <div class="stat-item">
+                        <i class="fas fa-gas-pump"></i>
+                        <span id="fuel-classique">0%</span>
+                    </div>
+                    <div class="stat-item">
+                        <i class="fas fa-wrench"></i>
+                        <span id="engine-classique">100%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Menu d'édition -->
+    <div id="edit-menu" style="display: none;">
+        <div class="edit-panel">
+            <div class="edit-header">
+                <h2><i class="fas fa-sliders"></i> Édition HUD</h2>
+                <button class="close-btn" id="close-edit"><i class="fas fa-times"></i></button>
+            </div>
+
+            <div class="edit-content">
+                <!-- Section Éléments -->
+                <div class="edit-section">
+                    <h3><i class="fas fa-eye"></i> Éléments visibles</h3>
+                    <div class="toggle-grid">
+                        <label class="toggle-item">
+                            <input type="checkbox" id="toggle-id" data-element="id">
+                            <span>ID</span>
+                        </label>
+                        <label class="toggle-item">
+                            <input type="checkbox" id="toggle-job" data-element="job">
+                            <span>Job</span>
+                        </label>
+                        <label class="toggle-item">
+                            <input type="checkbox" id="toggle-grade" data-element="grade">
+                            <span>Grade</span>
+                        </label>
+                        <label class="toggle-item">
+                            <input type="checkbox" id="toggle-cash" data-element="cash">
+                            <span>Cash</span>
+                        </label>
+                        <label class="toggle-item">
+                            <input type="checkbox" id="toggle-bank" data-element="bank">
+                            <span>Bank</span>
+                        </label>
+                        <label class="toggle-item">
+                            <input type="checkbox" id="toggle-health" data-element="health">
+                            <span>Santé</span>
+                        </label>
+                        <label class="toggle-item">
+                            <input type="checkbox" id="toggle-armor" data-element="armor">
+                            <span>Armure</span>
+                        </label>
+                        <label class="toggle-item">
+                            <input type="checkbox" id="toggle-hunger" data-element="hunger">
+                            <span>Faim</span>
+                        </label>
+                        <label class="toggle-item">
+                            <input type="checkbox" id="toggle-thirst" data-element="thirst">
+                            <span>Soif</span>
+                        </label>
+                        <label class="toggle-item">
+                            <input type="checkbox" id="toggle-speedometer" data-element="speedometer">
+                            <span>Compteur</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Section Style du compteur -->
+                <div class="edit-section">
+                    <h3><i class="fas fa-gauge-high"></i> Style du compteur</h3>
+                    <div class="style-selector">
+                        <button class="style-btn" data-style="minimal">Minimal</button>
+                        <button class="style-btn active" data-style="moderne">Moderne</button>
+                        <button class="style-btn" data-style="classique">Classique</button>
+                    </div>
+                </div>
+
+                <!-- Section Couleurs -->
+                <div class="edit-section">
+                    <h3><i class="fas fa-palette"></i> Couleurs</h3>
+                    <div class="color-grid">
+                        <div class="color-item">
+                            <label>Primaire</label>
+                            <input type="color" id="color-primary" data-color="primary">
+                        </div>
+                        <div class="color-item">
+                            <label>Secondaire</label>
+                            <input type="color" id="color-secondary" data-color="secondary">
+                        </div>
+                        <div class="color-item">
+                            <label>Succès</label>
+                            <input type="color" id="color-success" data-color="success">
+                        </div>
+                        <div class="color-item">
+                            <label>Attention</label>
+                            <input type="color" id="color-warning" data-color="warning">
+                        </div>
+                        <div class="color-item">
+                            <label>Danger</label>
+                            <input type="color" id="color-danger" data-color="danger">
+                        </div>
+                        <div class="color-item">
+                            <label>Info</label>
+                            <input type="color" id="color-info" data-color="info">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Boutons d'action -->
+                <div class="edit-actions">
+                    <button class="action-btn save" id="save-config">
+                        <i class="fas fa-save"></i> Sauvegarder
+                    </button>
+                    <button class="action-btn reset" id="reset-config">
+                        <i class="fas fa-rotate-left"></i> Réinitialiser
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Grille en mode édition -->
+        <div id="edit-grid"></div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

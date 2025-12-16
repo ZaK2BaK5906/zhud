@@ -1,0 +1,720 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    overflow: hidden;
+    width: 100vw;
+    height: 100vh;
+}
+
+/* Variables CSS pour les couleurs (dynamiques) */
+:root {
+    --color-primary: #00d4ff;
+    --color-secondary: #ff006e;
+    --color-success: #00ff88;
+    --color-warning: #ffaa00;
+    --color-danger: #ff0055;
+    --color-info: #0099ff;
+    --color-text: #ffffff;
+    --color-background: #1a1a1a;
+}
+
+/* Container principal */
+#hud-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+/* Éléments HUD de base */
+.hud-element {
+    position: absolute;
+    pointer-events: all;
+    transition: opacity 0.3s ease;
+}
+
+.hud-element.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* Mode édition */
+.edit-mode .hud-element {
+    cursor: move;
+    border: 2px dashed var(--color-primary);
+    background: rgba(0, 212, 255, 0.1);
+}
+
+.edit-mode .hud-element.dragging {
+    opacity: 0.7;
+    z-index: 9999;
+}
+
+/* ========== INFORMATIONS JOUEUR ========== */
+#player-info {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 16px;
+    background: rgba(26, 26, 26, 0.95);
+    border-radius: 12px;
+    border: 2px solid rgba(0, 212, 255, 0.3);
+}
+
+.info-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    border-left: 3px solid var(--color-primary);
+    transition: all 0.2s ease;
+}
+
+.info-item:hover {
+    background: rgba(255, 255, 255, 0.08);
+    transform: translateX(4px);
+}
+
+.info-item.hidden {
+    display: none;
+}
+
+.info-item i {
+    color: var(--color-primary);
+    font-size: 16px;
+    width: 20px;
+    text-align: center;
+}
+
+.info-label {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    min-width: 50px;
+}
+
+.info-value {
+    color: var(--color-text);
+    font-weight: 600;
+    font-size: 14px;
+    margin-left: auto;
+}
+
+/* ========== INDICATEURS DE STATUT (FORMES INNOVANTES) ========== */
+#status-indicators {
+    display: flex;
+    gap: 16px;
+    padding: 16px;
+    background: rgba(26, 26, 26, 0.95);
+    border-radius: 12px;
+    border: 2px solid rgba(0, 212, 255, 0.3);
+}
+
+.status-item {
+    position: relative;
+    width: 80px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.status-item.hidden {
+    display: none;
+}
+
+.status-bg,
+.status-fill {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+}
+
+.status-bg {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.status-fill {
+    background: var(--color-primary);
+    transition: clip-path 0.3s ease;
+}
+
+/* Forme Hexagone (Santé) */
+.status-item.hexagon .status-bg,
+.status-item.hexagon .status-fill {
+    clip-path: polygon(30% 0%, 70% 0%, 100% 50%, 70% 100%, 30% 100%, 0% 50%);
+}
+
+.status-item.hexagon .status-fill {
+    background: linear-gradient(135deg, #ff0055, #ff3366);
+}
+
+/* Forme Diamant (Armure) */
+.status-item.diamond .status-bg,
+.status-item.diamond .status-fill {
+    clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+}
+
+.status-item.diamond .status-fill {
+    background: linear-gradient(135deg, #0099ff, #00d4ff);
+}
+
+/* Forme Pentagone (Faim) */
+.status-item.pentagon .status-bg,
+.status-item.pentagon .status-fill {
+    clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
+}
+
+.status-item.pentagon .status-fill {
+    background: linear-gradient(135deg, #ffaa00, #ffcc00);
+}
+
+/* Forme Octogone (Soif) */
+.status-item.octagon .status-bg,
+.status-item.octagon .status-fill {
+    clip-path: polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%);
+}
+
+.status-item.octagon .status-fill {
+    background: linear-gradient(135deg, #00d4ff, #00ff88);
+}
+
+.status-icon {
+    position: relative;
+    z-index: 2;
+    color: var(--color-text);
+    font-size: 24px;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+.status-value {
+    position: absolute;
+    bottom: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: var(--color-text);
+    font-weight: 700;
+    font-size: 12px;
+    background: rgba(26, 26, 26, 0.9);
+    padding: 2px 8px;
+    border-radius: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* ========== COMPTEUR DE VITESSE ========== */
+#speedometer {
+    padding: 16px;
+    background: rgba(26, 26, 26, 0.95);
+    border-radius: 12px;
+    border: 2px solid rgba(0, 212, 255, 0.3);
+}
+
+.speedometer-style {
+    display: none;
+}
+
+.speedometer-style.active {
+    display: block;
+}
+
+/* Style Minimal */
+.speedometer-style.minimal {
+    min-width: 150px;
+}
+
+.speed-display {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    margin-bottom: 12px;
+}
+
+.speed-value {
+    font-size: 42px;
+    font-weight: 700;
+    color: var(--color-primary);
+    line-height: 1;
+    text-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+}
+
+.speed-unit {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.6);
+    text-transform: uppercase;
+}
+
+.vehicle-info-minimal {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.info-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--color-text);
+}
+
+.info-row i {
+    color: var(--color-primary);
+    width: 16px;
+}
+
+/* Style Moderne */
+.speedometer-style.moderne {
+    min-width: 200px;
+}
+
+.speed-main {
+    margin-bottom: 16px;
+}
+
+.speed-circle {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: rgba(0, 212, 255, 0.1);
+    border: 3px solid var(--color-primary);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    position: relative;
+}
+
+.speed-circle::before {
+    content: '';
+    position: absolute;
+    inset: -6px;
+    border-radius: 50%;
+    background: conic-gradient(
+        from 0deg,
+        transparent 0deg,
+        var(--color-primary) 180deg,
+        transparent 180deg
+    );
+    opacity: 0.3;
+    animation: rotate 3s linear infinite;
+}
+
+@keyframes rotate {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.speed-circle .speed-value {
+    font-size: 36px;
+    position: relative;
+    z-index: 1;
+}
+
+.speed-circle .speed-unit {
+    position: relative;
+    z-index: 1;
+}
+
+.vehicle-bars {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.bar-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.bar-item i {
+    color: var(--color-primary);
+    width: 20px;
+    font-size: 14px;
+}
+
+.bar-container {
+    flex: 1;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.3s ease;
+}
+
+.fuel-bar {
+    background: linear-gradient(90deg, #ffaa00, #ffcc00);
+}
+
+.engine-bar {
+    background: linear-gradient(90deg, #00ff88, #00d4ff);
+}
+
+.bar-value {
+    font-size: 12px;
+    color: var(--color-text);
+    min-width: 40px;
+    text-align: right;
+}
+
+/* Style Classique */
+.speedometer-style.classique {
+    min-width: 220px;
+}
+
+.gauge-container {
+    position: relative;
+    margin-bottom: 16px;
+}
+
+.speed-gauge {
+    width: 200px;
+    height: 120px;
+    display: block;
+    margin: 0 auto;
+}
+
+.gauge-bg {
+    fill: none;
+    stroke: rgba(255, 255, 255, 0.1);
+    stroke-width: 12;
+    stroke-linecap: round;
+}
+
+.gauge-fill {
+    fill: none;
+    stroke: var(--color-primary);
+    stroke-width: 12;
+    stroke-linecap: round;
+    stroke-dasharray: 251;
+    stroke-dashoffset: 251;
+    transition: stroke-dashoffset 0.3s ease;
+}
+
+.gauge-needle {
+    stroke: var(--color-secondary);
+    stroke-width: 3;
+    stroke-linecap: round;
+    transform-origin: 100px 100px;
+    transition: transform 0.3s ease;
+}
+
+.gauge-center {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+}
+
+.gauge-center .speed-value {
+    font-size: 32px;
+}
+
+.vehicle-stats {
+    display: flex;
+    justify-content: space-around;
+    gap: 20px;
+}
+
+.stat-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--color-text);
+}
+
+.stat-item i {
+    color: var(--color-primary);
+}
+
+/* ========== MENU D'ÉDITION ========== */
+#edit-menu {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 10000;
+    pointer-events: all;
+}
+
+.edit-panel {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    max-width: 600px;
+    max-height: 90vh;
+    background: rgba(26, 26, 26, 0.98);
+    border-radius: 16px;
+    border: 2px solid var(--color-primary);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.edit-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px;
+    background: rgba(0, 212, 255, 0.1);
+    border-bottom: 2px solid var(--color-primary);
+}
+
+.edit-header h2 {
+    color: var(--color-text);
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.close-btn {
+    background: rgba(255, 0, 85, 0.2);
+    border: 2px solid var(--color-danger);
+    color: var(--color-danger);
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.2s ease;
+}
+
+.close-btn:hover {
+    background: var(--color-danger);
+    color: white;
+    transform: scale(1.1);
+}
+
+.edit-content {
+    padding: 24px;
+    overflow-y: auto;
+    flex: 1;
+}
+
+.edit-section {
+    margin-bottom: 28px;
+}
+
+.edit-section h3 {
+    color: var(--color-primary);
+    font-size: 16px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Toggle grid */
+.toggle-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 12px;
+}
+
+.toggle-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 2px solid transparent;
+}
+
+.toggle-item:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: var(--color-primary);
+}
+
+.toggle-item input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    accent-color: var(--color-primary);
+}
+
+.toggle-item span {
+    color: var(--color-text);
+    font-size: 14px;
+}
+
+/* Style selector */
+.style-selector {
+    display: flex;
+    gap: 12px;
+}
+
+.style-btn {
+    flex: 1;
+    padding: 14px 20px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    color: var(--color-text);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.style-btn:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: var(--color-primary);
+}
+
+.style-btn.active {
+    background: var(--color-primary);
+    border-color: var(--color-primary);
+    color: #1a1a1a;
+}
+
+/* Color grid */
+.color-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 16px;
+}
+
+.color-item {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.color-item label {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.color-item input[type="color"] {
+    width: 100%;
+    height: 40px;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    cursor: pointer;
+    background: transparent;
+}
+
+.color-item input[type="color"]::-webkit-color-swatch-wrapper {
+    padding: 0;
+}
+
+.color-item input[type="color"]::-webkit-color-swatch {
+    border: none;
+    border-radius: 6px;
+}
+
+/* Action buttons */
+.edit-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 24px;
+}
+
+.action-btn {
+    flex: 1;
+    padding: 16px 24px;
+    border: 2px solid;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.action-btn.save {
+    background: rgba(0, 255, 136, 0.1);
+    border-color: var(--color-success);
+    color: var(--color-success);
+}
+
+.action-btn.save:hover {
+    background: var(--color-success);
+    color: #1a1a1a;
+    transform: translateY(-2px);
+}
+
+.action-btn.reset {
+    background: rgba(255, 170, 0, 0.1);
+    border-color: var(--color-warning);
+    color: var(--color-warning);
+}
+
+.action-btn.reset:hover {
+    background: var(--color-warning);
+    color: #1a1a1a;
+    transform: translateY(-2px);
+}
+
+/* Grille d'édition */
+#edit-grid {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image:
+        repeating-linear-gradient(0deg, rgba(0, 212, 255, 0.1) 0px, transparent 1px, transparent 20px),
+        repeating-linear-gradient(90deg, rgba(0, 212, 255, 0.1) 0px, transparent 1px, transparent 20px);
+    pointer-events: none;
+    z-index: 9998;
+}
+
+/* Scrollbar personnalisée */
+.edit-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.edit-content::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+}
+
+.edit-content::-webkit-scrollbar-thumb {
+    background: var(--color-primary);
+    border-radius: 4px;
+}
+
+.edit-content::-webkit-scrollbar-thumb:hover {
+    background: var(--color-info);
+}
