@@ -214,14 +214,19 @@ window.addEventListener('message', (event) => {
     const data = event.data;
 
     try {
+        console.log('[ZK HUD V2] NUI Message received:', data.action);
+
         switch(data.action) {
             case 'initHUD':
+                console.log('[ZK HUD V2] Initializing HUD with settings:', data.settings);
                 initHUD(data.settings, data.locale);
                 break;
             case 'showHUD':
+                console.log('[ZK HUD V2] Showing HUD');
                 showHUD();
                 break;
             case 'hideHUD':
+                console.log('[ZK HUD V2] Hiding HUD');
                 hideHUD();
                 break;
             case 'updatePlayerInfo':

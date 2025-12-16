@@ -39,9 +39,14 @@ CreateThread(function()
         PlayerData = ESX.GetPlayerData()
         isPlayerLoaded = true
 
+        Config.DebugPrint('ESX Player loaded, initializing HUD')
+        Wait(Config.SpawnDelay)
+        InitializeHUD()
+
         RegisterNetEvent('esx:playerLoaded', function(xPlayer)
             PlayerData = xPlayer
             isPlayerLoaded = true
+            Config.DebugPrint('ESX playerLoaded event triggered')
             Wait(Config.SpawnDelay)
             InitializeHUD()
         end)
@@ -111,10 +116,14 @@ function InitializeHUD()
         end
 
         if Config.ShowOnSpawn then
+            Config.DebugPrint('Showing HUD after spawn delay')
             Wait(100)
             isHudVisible = true
             SendNUIMessage({action = 'showHUD'})
+            Config.DebugPrint('HUD shown, starting updates')
             StartHUDUpdates()
+        else
+            Config.DebugPrint('ShowOnSpawn is disabled')
         end
     end)
 end

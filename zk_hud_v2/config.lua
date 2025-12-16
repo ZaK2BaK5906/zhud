@@ -132,7 +132,7 @@ Config.Notification = function(message, type)
 end
 
 -- Debug mode
-Config.Debug = false
+Config.Debug = true
 
 -- Fonction de debug
 Config.DebugPrint = function(...)
