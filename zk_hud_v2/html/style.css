@@ -1,0 +1,701 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    overflow: hidden;
+    width: 100vw;
+    height: 100vh;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* ==================== GRILLE D'ÉDITION ==================== */
+.edit-grid {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image:
+        repeating-linear-gradient(0deg, rgba(59, 130, 246, 0.1) 0px, rgba(59, 130, 246, 0.1) 1px, transparent 1px, transparent 10px),
+        repeating-linear-gradient(90deg, rgba(59, 130, 246, 0.1) 0px, rgba(59, 130, 246, 0.1) 1px, transparent 1px, transparent 10px);
+    pointer-events: none;
+    z-index: 9998;
+}
+
+/* ==================== CONTENEUR HUD ==================== */
+.hud-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+.draggable {
+    pointer-events: auto;
+}
+
+.draggable.dragging {
+    opacity: 0.8;
+    cursor: move;
+    z-index: 9999;
+}
+
+/* ==================== INFORMATIONS JOUEUR ==================== */
+.player-info {
+    position: absolute;
+    top: 2%;
+    right: 2%;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 200px;
+}
+
+.player-info-item {
+    background: rgba(17, 24, 39, 0.85);
+    border: 1px solid rgba(59, 130, 246, 0.2);
+    border-radius: 8px;
+    padding: 10px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.3s ease;
+}
+
+.player-info-item:hover {
+    border-color: rgba(59, 130, 246, 0.4);
+    transform: translateX(-2px);
+}
+
+.player-info-item .label {
+    color: rgba(156, 163, 175, 1);
+    font-size: 12px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.player-info-item .value {
+    color: rgba(243, 244, 246, 1);
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.player-info-item .value.cash {
+    color: #10b981;
+}
+
+.player-info-item .value.bank {
+    color: #3b82f6;
+}
+
+/* ==================== STATUTS CIRCULAIRES ==================== */
+.statuses {
+    position: absolute;
+    bottom: 2%;
+    left: 22%;
+    display: flex;
+    gap: 16px;
+}
+
+.status-item {
+    position: relative;
+    width: 80px;
+    height: 80px;
+    transition: all 0.3s ease;
+}
+
+.status-item:hover {
+    transform: scale(1.05);
+}
+
+.circular-progress {
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg);
+}
+
+.circular-progress circle {
+    fill: none;
+    stroke-linecap: round;
+}
+
+.circular-progress .bg {
+    stroke: rgba(31, 41, 55, 0.8);
+    stroke-width: 6;
+}
+
+.circular-progress .progress {
+    stroke-width: 6;
+    transition: stroke-dashoffset 0.3s ease;
+    stroke-dasharray: 283;
+    stroke-dashoffset: 283;
+}
+
+.circular-progress .health-progress {
+    stroke: var(--health-color, #ef4444);
+}
+
+.circular-progress .armor-progress {
+    stroke: var(--armor-color, #3b82f6);
+}
+
+.circular-progress .hunger-progress {
+    stroke: var(--hunger-color, #f59e0b);
+}
+
+.circular-progress .thirst-progress {
+    stroke: var(--thirst-color, #06b6d4);
+}
+
+.status-icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 32px;
+    height: 32px;
+    color: rgba(243, 244, 246, 1);
+}
+
+.status-icon svg {
+    width: 100%;
+    height: 100%;
+}
+
+.status-value {
+    position: absolute;
+    bottom: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: rgba(243, 244, 246, 1);
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+/* ==================== COMPTEUR DE VITESSE ==================== */
+.speedometer {
+    position: absolute;
+    bottom: 2%;
+    right: 2%;
+}
+
+.speedometer-style {
+    display: none;
+}
+
+.speedometer-style.active {
+    display: block;
+}
+
+/* Style Minimal */
+.speedometer-minimal {
+    background: rgba(17, 24, 39, 0.85);
+    border: 1px solid rgba(59, 130, 246, 0.2);
+    border-radius: 12px;
+    padding: 16px 20px;
+    min-width: 180px;
+}
+
+.speed-display {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.speed-display .speed-value {
+    font-size: 36px;
+    font-weight: 700;
+    color: rgba(243, 244, 246, 1);
+    line-height: 1;
+}
+
+.speed-display .speed-unit {
+    font-size: 14px;
+    color: rgba(156, 163, 175, 1);
+    font-weight: 500;
+}
+
+.vehicle-stats-minimal {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.stat-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.stat-icon {
+    font-size: 16px;
+    width: 20px;
+    text-align: center;
+}
+
+.stat-progress {
+    flex: 1;
+    height: 6px;
+    background: rgba(31, 41, 55, 0.8);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.stat-fill {
+    height: 100%;
+    transition: width 0.3s ease;
+    border-radius: 3px;
+}
+
+.fuel-fill {
+    background: var(--fuel-color, #f59e0b);
+}
+
+.vehicle-fill {
+    background: var(--vehicle-color, #10b981);
+}
+
+/* Style Moderne */
+.speedometer-modern {
+    background: rgba(17, 24, 39, 0.85);
+    border: 1px solid rgba(59, 130, 246, 0.2);
+    border-radius: 16px;
+    padding: 20px;
+    min-width: 220px;
+}
+
+.speed-container {
+    position: relative;
+    width: 200px;
+    height: 140px;
+    margin-bottom: 16px;
+}
+
+.speed-arc {
+    width: 100%;
+    height: 100%;
+}
+
+.arc-bg {
+    stroke: rgba(31, 41, 55, 0.8);
+}
+
+.arc-progress {
+    stroke: var(--primary-color, #3b82f6);
+    stroke-linecap: round;
+    transition: stroke-dashoffset 0.3s ease;
+    stroke-dasharray: 251.2;
+    stroke-dashoffset: 251.2;
+}
+
+.speed-text {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+}
+
+.speed-text .speed-value {
+    display: block;
+    font-size: 40px;
+    font-weight: 700;
+    color: rgba(243, 244, 246, 1);
+    line-height: 1;
+}
+
+.speed-text .speed-unit {
+    display: block;
+    font-size: 14px;
+    color: rgba(156, 163, 175, 1);
+    margin-top: 4px;
+}
+
+.vehicle-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.stat-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.stat-item .stat-icon {
+    font-size: 18px;
+    width: 24px;
+    text-align: center;
+}
+
+.stat-bar-container {
+    position: relative;
+    flex: 1;
+    height: 8px;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.stat-bar-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(31, 41, 55, 0.8);
+}
+
+.stat-bar-fill {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    transition: width 0.3s ease;
+}
+
+.stat-value {
+    font-size: 12px;
+    color: rgba(156, 163, 175, 1);
+    font-weight: 600;
+    min-width: 35px;
+    text-align: right;
+}
+
+/* Style Classique */
+.speedometer-classic {
+    background: rgba(17, 24, 39, 0.85);
+    border: 1px solid rgba(59, 130, 246, 0.2);
+    border-radius: 50%;
+    padding: 20px;
+    width: 200px;
+    height: 200px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.classic-gauge {
+    width: 160px;
+    height: 160px;
+    transform: rotate(-90deg);
+}
+
+.gauge-bg {
+    fill: none;
+    stroke: rgba(31, 41, 55, 0.8);
+    stroke-width: 12;
+}
+
+.gauge-progress {
+    fill: none;
+    stroke: var(--primary-color, #3b82f6);
+    stroke-width: 12;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 0.3s ease;
+    stroke-dasharray: 565.48;
+    stroke-dashoffset: 565.48;
+}
+
+.speed-value-classic {
+    font-size: 36px;
+    font-weight: 700;
+    fill: rgba(243, 244, 246, 1);
+    text-anchor: middle;
+    transform: rotate(90deg);
+    transform-origin: 100px 95px;
+}
+
+.speed-unit-classic {
+    font-size: 14px;
+    fill: rgba(156, 163, 175, 1);
+    text-anchor: middle;
+    transform: rotate(90deg);
+    transform-origin: 100px 115px;
+}
+
+.classic-stats {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 20px;
+}
+
+.classic-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.classic-label {
+    font-size: 16px;
+}
+
+.classic-value {
+    font-size: 11px;
+    color: rgba(156, 163, 175, 1);
+    font-weight: 600;
+}
+
+/* ==================== ÉDITEUR HUD ==================== */
+.hud-editor {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    pointer-events: auto;
+}
+
+.editor-container {
+    background: rgba(17, 24, 39, 0.98);
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    border-radius: 16px;
+    width: 90%;
+    max-width: 600px;
+    max-height: 90%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.editor-header {
+    padding: 20px 24px;
+    border-bottom: 1px solid rgba(59, 130, 246, 0.2);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.editor-header h2 {
+    color: rgba(243, 244, 246, 1);
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.close-btn {
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    color: #ef4444;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.close-btn:hover {
+    background: rgba(239, 68, 68, 0.2);
+    border-color: rgba(239, 68, 68, 0.5);
+}
+
+.editor-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px 24px;
+}
+
+.editor-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.editor-content::-webkit-scrollbar-track {
+    background: rgba(31, 41, 55, 0.5);
+    border-radius: 4px;
+}
+
+.editor-content::-webkit-scrollbar-thumb {
+    background: rgba(59, 130, 246, 0.5);
+    border-radius: 4px;
+}
+
+.editor-content::-webkit-scrollbar-thumb:hover {
+    background: rgba(59, 130, 246, 0.7);
+}
+
+.editor-section {
+    margin-bottom: 24px;
+}
+
+.editor-section h3 {
+    color: rgba(243, 244, 246, 1);
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 12px;
+}
+
+.style-selector {
+    display: flex;
+    gap: 8px;
+}
+
+.style-btn {
+    flex: 1;
+    background: rgba(31, 41, 55, 0.8);
+    border: 1px solid rgba(59, 130, 246, 0.2);
+    color: rgba(156, 163, 175, 1);
+    padding: 10px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.style-btn:hover {
+    border-color: rgba(59, 130, 246, 0.4);
+    background: rgba(31, 41, 55, 1);
+}
+
+.style-btn.active {
+    background: rgba(59, 130, 246, 0.2);
+    border-color: rgba(59, 130, 246, 0.5);
+    color: rgba(243, 244, 246, 1);
+}
+
+.toggle-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.toggle-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    background: rgba(31, 41, 55, 0.5);
+    border: 1px solid rgba(59, 130, 246, 0.1);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: rgba(156, 163, 175, 1);
+    font-size: 14px;
+}
+
+.toggle-item:hover {
+    background: rgba(31, 41, 55, 0.7);
+    border-color: rgba(59, 130, 246, 0.2);
+}
+
+.toggle-item input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    accent-color: #3b82f6;
+}
+
+.color-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+}
+
+.color-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 12px;
+    background: rgba(31, 41, 55, 0.5);
+    border: 1px solid rgba(59, 130, 246, 0.1);
+    border-radius: 8px;
+}
+
+.color-item label {
+    color: rgba(156, 163, 175, 1);
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.color-item input[type="color"] {
+    width: 40px;
+    height: 30px;
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    border-radius: 6px;
+    cursor: pointer;
+    background: transparent;
+}
+
+.editor-footer {
+    padding: 16px 24px;
+    border-top: 1px solid rgba(59, 130, 246, 0.2);
+    display: flex;
+    gap: 12px;
+}
+
+.editor-btn {
+    flex: 1;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+}
+
+.reset-btn {
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    color: #ef4444;
+}
+
+.reset-btn:hover {
+    background: rgba(239, 68, 68, 0.2);
+    border-color: rgba(239, 68, 68, 0.5);
+}
+
+.save-btn {
+    background: rgba(59, 130, 246, 0.2);
+    border: 1px solid rgba(59, 130, 246, 0.4);
+    color: #3b82f6;
+}
+
+.save-btn:hover {
+    background: rgba(59, 130, 246, 0.3);
+    border-color: rgba(59, 130, 246, 0.6);
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.player-info-item,
+.status-item,
+.speedometer {
+    animation: fadeIn 0.3s ease;
+}

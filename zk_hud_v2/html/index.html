@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZK HUD V2</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Grille d'édition -->
+    <div id="edit-grid" class="edit-grid hidden"></div>
+
+    <!-- Conteneur principal du HUD -->
+    <div id="hud-container" class="hud-container hidden">
+        <!-- Informations joueur (haut droite) -->
+        <div id="player-info" class="player-info draggable" data-element="playerInfo">
+            <div class="player-info-item" data-visible="id">
+                <span class="label" data-lang="id">ID</span>
+                <span class="value" id="player-id">0</span>
+            </div>
+            <div class="player-info-item" data-visible="job">
+                <span class="label" data-lang="job">Job</span>
+                <span class="value" id="player-job">Unemployed</span>
+            </div>
+            <div class="player-info-item" data-visible="grade">
+                <span class="label" data-lang="grade">Grade</span>
+                <span class="value" id="player-grade">None</span>
+            </div>
+            <div class="player-info-item" data-visible="cash">
+                <span class="label" data-lang="cash">Cash</span>
+                <span class="value cash" id="player-cash">$0</span>
+            </div>
+            <div class="player-info-item" data-visible="bank">
+                <span class="label" data-lang="bank">Bank</span>
+                <span class="value bank" id="player-bank">$0</span>
+            </div>
+        </div>
+
+        <!-- Statuts circulaires (bas gauche) -->
+        <div id="statuses" class="statuses draggable" data-element="statuses">
+            <div class="status-item" data-visible="health" data-status="health">
+                <svg class="circular-progress" viewBox="0 0 100 100">
+                    <circle class="bg" cx="50" cy="50" r="45"></circle>
+                    <circle class="progress health-progress" cx="50" cy="50" r="45" id="health-circle"></circle>
+                </svg>
+                <div class="status-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                    </svg>
+                </div>
+                <span class="status-value" id="health-value">100</span>
+            </div>
+
+            <div class="status-item" data-visible="armor" data-status="armor">
+                <svg class="circular-progress" viewBox="0 0 100 100">
+                    <circle class="bg" cx="50" cy="50" r="45"></circle>
+                    <circle class="progress armor-progress" cx="50" cy="50" r="45" id="armor-circle"></circle>
+                </svg>
+                <div class="status-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                    </svg>
+                </div>
+                <span class="status-value" id="armor-value">0</span>
+            </div>
+
+            <div class="status-item" data-visible="hunger" data-status="hunger">
+                <svg class="circular-progress" viewBox="0 0 100 100">
+                    <circle class="bg" cx="50" cy="50" r="45"></circle>
+                    <circle class="progress hunger-progress" cx="50" cy="50" r="45" id="hunger-circle"></circle>
+                </svg>
+                <div class="status-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 8h1a4 4 0 0 1 0 8h-1M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path>
+                        <line x1="6" y1="1" x2="6" y2="4"></line>
+                        <line x1="10" y1="1" x2="10" y2="4"></line>
+                        <line x1="14" y1="1" x2="14" y2="4"></line>
+                    </svg>
+                </div>
+                <span class="status-value" id="hunger-value">100</span>
+            </div>
+
+            <div class="status-item" data-visible="thirst" data-status="thirst">
+                <svg class="circular-progress" viewBox="0 0 100 100">
+                    <circle class="bg" cx="50" cy="50" r="45"></circle>
+                    <circle class="progress thirst-progress" cx="50" cy="50" r="45" id="thirst-circle"></circle>
+                </svg>
+                <div class="status-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path>
+                    </svg>
+                </div>
+                <span class="status-value" id="thirst-value">100</span>
+            </div>
+        </div>
+
+        <!-- Compteur de vitesse (bas droite) -->
+        <div id="speedometer" class="speedometer draggable hidden" data-element="speedometer" data-visible="speedometer">
+            <!-- Style Minimal -->
+            <div class="speedometer-minimal speedometer-style" data-style="minimal">
+                <div class="speed-display">
+                    <span class="speed-value" id="speed-minimal">0</span>
+                    <span class="speed-unit" data-lang="kmh">km/h</span>
+                </div>
+                <div class="vehicle-stats-minimal">
+                    <div class="stat-bar">
+                        <div class="stat-icon fuel-icon">⛽</div>
+                        <div class="stat-progress">
+                            <div class="stat-fill fuel-fill" id="fuel-minimal" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    <div class="stat-bar">
+                        <div class="stat-icon vehicle-icon">🔧</div>
+                        <div class="stat-progress">
+                            <div class="stat-fill vehicle-fill" id="vehicle-minimal" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Style Moderne -->
+            <div class="speedometer-modern speedometer-style active" data-style="modern">
+                <div class="speed-container">
+                    <svg class="speed-arc" viewBox="0 0 200 140">
+                        <path class="arc-bg" d="M 20 120 A 80 80 0 0 1 180 120" fill="none" stroke-width="8"></path>
+                        <path class="arc-progress" id="speed-arc-modern" d="M 20 120 A 80 80 0 0 1 180 120" fill="none" stroke-width="8"></path>
+                    </svg>
+                    <div class="speed-text">
+                        <span class="speed-value" id="speed-modern">0</span>
+                        <span class="speed-unit" data-lang="kmh">km/h</span>
+                    </div>
+                </div>
+                <div class="vehicle-stats">
+                    <div class="stat-item">
+                        <div class="stat-icon">⛽</div>
+                        <div class="stat-bar-container">
+                            <div class="stat-bar-bg"></div>
+                            <div class="stat-bar-fill fuel-fill" id="fuel-modern" style="width: 0%"></div>
+                        </div>
+                        <span class="stat-value" id="fuel-modern-value">0%</span>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-icon">🔧</div>
+                        <div class="stat-bar-container">
+                            <div class="stat-bar-bg"></div>
+                            <div class="stat-bar-fill vehicle-fill" id="vehicle-modern" style="width: 0%"></div>
+                        </div>
+                        <span class="stat-value" id="vehicle-modern-value">0%</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Style Classique -->
+            <div class="speedometer-classic speedometer-style" data-style="classic">
+                <svg class="classic-gauge" viewBox="0 0 200 200">
+                    <circle class="gauge-bg" cx="100" cy="100" r="90"></circle>
+                    <circle class="gauge-progress" id="speed-gauge-classic" cx="100" cy="100" r="90"></circle>
+                    <text x="100" y="95" class="speed-value-classic" id="speed-classic">0</text>
+                    <text x="100" y="115" class="speed-unit-classic" data-lang="kmh">km/h</text>
+                </svg>
+                <div class="classic-stats">
+                    <div class="classic-stat">
+                        <span class="classic-label">⛽</span>
+                        <span class="classic-value" id="fuel-classic">0%</span>
+                    </div>
+                    <div class="classic-stat">
+                        <span class="classic-label">🔧</span>
+                        <span class="classic-value" id="vehicle-classic">0%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Éditeur HUD -->
+    <div id="hud-editor" class="hud-editor hidden">
+        <div class="editor-container">
+            <div class="editor-header">
+                <h2 data-lang="hud_editor">HUD Editor</h2>
+                <button class="close-btn" id="close-editor">✕</button>
+            </div>
+
+            <div class="editor-content">
+                <div class="editor-section">
+                    <h3 data-lang="speedometer_style">Speedometer Style</h3>
+                    <div class="style-selector">
+                        <button class="style-btn active" data-style="minimal">
+                            <span data-lang="minimal">Minimal</span>
+                        </button>
+                        <button class="style-btn" data-style="modern">
+                            <span data-lang="modern">Modern</span>
+                        </button>
+                        <button class="style-btn" data-style="classic">
+                            <span data-lang="classic">Classic</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="editor-section">
+                    <h3 data-lang="toggle_elements">Toggle Elements</h3>
+                    <div class="toggle-list">
+                        <label class="toggle-item">
+                            <input type="checkbox" data-toggle="id" checked>
+                            <span data-lang="show_id">Show ID</span>
+                        </label>
+                        <label class="toggle-item">
+                            <input type="checkbox" data-toggle="job" checked>
+                            <span data-lang="show_job">Show Job</span>
+                        </label>
+                        <label class="toggle-item">
+                            <input type="checkbox" data-toggle="grade" checked>
+                            <span data-lang="show_grade">Show Grade</span>
+                        </label>
+                        <label class="toggle-item">
+                            <input type="checkbox" data-toggle="cash" checked>
+                            <span data-lang="show_cash">Show Cash</span>
+                        </label>
+                        <label class="toggle-item">
+                            <input type="checkbox" data-toggle="bank" checked>
+                            <span data-lang="show_bank">Show Bank</span>
+                        </label>
+                        <label class="toggle-item">
+                            <input type="checkbox" data-toggle="health" checked>
+                            <span data-lang="show_health">Show Health</span>
+                        </label>
+                        <label class="toggle-item">
+                            <input type="checkbox" data-toggle="armor" checked>
+                            <span data-lang="show_armor">Show Armor</span>
+                        </label>
+                        <label class="toggle-item">
+                            <input type="checkbox" data-toggle="hunger" checked>
+                            <span data-lang="show_hunger">Show Hunger</span>
+                        </label>
+                        <label class="toggle-item">
+                            <input type="checkbox" data-toggle="thirst" checked>
+                            <span data-lang="show_thirst">Show Thirst</span>
+                        </label>
+                        <label class="toggle-item">
+                            <input type="checkbox" data-toggle="speedometer" checked>
+                            <span data-lang="show_speedometer">Show Speedometer</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="editor-section">
+                    <h3 data-lang="change_colors">Colors</h3>
+                    <div class="color-list">
+                        <div class="color-item">
+                            <label data-lang="health_color">Health</label>
+                            <input type="color" data-color="health" value="#ef4444">
+                        </div>
+                        <div class="color-item">
+                            <label data-lang="armor_color">Armor</label>
+                            <input type="color" data-color="armor" value="#3b82f6">
+                        </div>
+                        <div class="color-item">
+                            <label data-lang="hunger_color">Hunger</label>
+                            <input type="color" data-color="hunger" value="#f59e0b">
+                        </div>
+                        <div class="color-item">
+                            <label data-lang="thirst_color">Thirst</label>
+                            <input type="color" data-color="thirst" value="#06b6d4">
+                        </div>
+                        <div class="color-item">
+                            <label data-lang="fuel_color">Fuel</label>
+                            <input type="color" data-color="fuel" value="#f59e0b">
+                        </div>
+                        <div class="color-item">
+                            <label data-lang="vehicle_color">Vehicle</label>
+                            <input type="color" data-color="vehicle" value="#10b981">
+                        </div>
+                        <div class="color-item">
+                            <label data-lang="cash_color">Cash</label>
+                            <input type="color" data-color="cash" value="#10b981">
+                        </div>
+                        <div class="color-item">
+                            <label data-lang="bank_color">Bank</label>
+                            <input type="color" data-color="bank" value="#3b82f6">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="editor-footer">
+                <button class="editor-btn reset-btn" id="reset-settings" data-lang="reset">Reset</button>
+                <button class="editor-btn save-btn" id="save-settings" data-lang="save">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

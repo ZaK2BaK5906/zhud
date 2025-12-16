@@ -1,0 +1,10 @@
+CREATE TABLE IF NOT EXISTS `zk_hud_v2` (
+    `identifier` VARCHAR(60) NOT NULL,
+    `positions` LONGTEXT NOT NULL,
+    `colors` LONGTEXT NOT NULL,
+    `visibility` LONGTEXT NOT NULL,
+    `speedometer_style` VARCHAR(20) NOT NULL DEFAULT 'modern',
+    `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (`identifier`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
