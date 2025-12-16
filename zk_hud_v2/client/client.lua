@@ -14,18 +14,14 @@ function _U(str, ...)
     end
 end
 
--- Fonction de notification (surcharge de Config.Notification)
+-- Fonction de notification avec ox_lib
 local function ShowNotification(message, type)
-    if Config.Framework == 'esx' and ESX then
-        ESX.ShowNotification(message)
-    elseif Config.Framework == 'qb' and QBCore then
-        QBCore.Functions.Notify(message, type or 'primary')
-    else
-        -- Notification native GTA
-        BeginTextCommandThefeedPost('STRING')
-        AddTextComponentSubstringPlayerName(message)
-        EndTextCommandThefeedPostTicker(false, true)
-    end
+    lib.notify({
+        title = 'ZK HUD',
+        description = message,
+        type = type or 'info',
+        position = 'top'
+    })
 end
 
 -- Surcharger Config.Notification avec la vraie fonction

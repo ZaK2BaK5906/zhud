@@ -125,10 +125,9 @@ Config.Custom = {
     end
 }
 
--- Notifications (sera définie dans client.lua)
+-- Notifications (sera surchargée dans client.lua avec ox_lib)
 Config.Notification = function(message, type)
-    -- Cette fonction sera surchargée dans client.lua
-    -- Notification par défaut en attendant
+    -- Cette fonction sera surchargée dans client.lua avec lib.notify
     print('[ZK HUD V2] ' .. message)
 end
 
