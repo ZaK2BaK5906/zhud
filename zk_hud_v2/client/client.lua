@@ -14,6 +14,23 @@ function _U(str, ...)
     end
 end
 
+-- Fonction de notification (surcharge de Config.Notification)
+local function ShowNotification(message, type)
+    if Config.Framework == 'esx' and ESX then
+        ESX.ShowNotification(message)
+    elseif Config.Framework == 'qb' and QBCore then
+        QBCore.Functions.Notify(message, type or 'primary')
+    else
+        -- Notification native GTA
+        BeginTextCommandThefeedPost('STRING')
+        AddTextComponentSubstringPlayerName(message)
+        EndTextCommandThefeedPostTicker(false, true)
+    end
+end
+
+-- Surcharger Config.Notification avec la vraie fonction
+Config.Notification = ShowNotification
+
 -- Initialisation du framework
 CreateThread(function()
     if Config.Framework == 'esx' then

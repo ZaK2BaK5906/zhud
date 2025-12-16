@@ -125,18 +125,11 @@ Config.Custom = {
     end
 }
 
--- Notifications (utilisé pour les messages d'erreur/succès)
+-- Notifications (sera définie dans client.lua)
 Config.Notification = function(message, type)
-    if Config.Framework == 'esx' then
-        ESX.ShowNotification(message)
-    elseif Config.Framework == 'qb' then
-        QBCore.Functions.Notify(message, type)
-    else
-        -- Custom notification
-        BeginTextCommandThefeedPost('STRING')
-        AddTextComponentSubstringPlayerName(message)
-        EndTextCommandThefeedPostTicker(false, true)
-    end
+    -- Cette fonction sera surchargée dans client.lua
+    -- Notification par défaut en attendant
+    print('[ZK HUD V2] ' .. message)
 end
 
 -- Debug mode
